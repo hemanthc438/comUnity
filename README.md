@@ -95,3 +95,54 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+
+
+Dependencies:
+
+@react-navigation/native
+- Core React Navigation library
+
+@react-navigation/native-stack
+- Native stack navigator for screen navigation
+
+react-native-screens
+- Native screen optimization for navigation
+
+react-native-safe-area-context
+- Safe area handling for notches/status bars
+
+react-native-gesture-handler
+- Gesture support required by React Navigation
+
+@tanstack/react-query
+- Server state management, caching, retries, pagination
+
+@tanstack/react-query-persist-client
+- Persists React Query cache across app restarts
+
+@tanstack/query-async-storage-persister
+- AsyncStorage persister adapter for React Query
+
+zustand
+- Lightweight global state management
+
+axios
+- HTTP client for API requests
+
+react-native-mmkv
+- High-performance persistent storage
+
+@react-native-async-storage/async-storage
+- Persistent async key-value storage
+
+@react-native-community/netinfo
+- Network connectivity detection
+
+prettier
+- Code formatter
+
+eslint-config-prettier
+- Disables conflicting ESLint formatting rules
+
+eslint-plugin-prettier
+- Runs Prettier as ESLint rules
