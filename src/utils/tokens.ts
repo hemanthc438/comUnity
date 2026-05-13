@@ -1,21 +1,45 @@
 export const lightColors = {
-  background: '#FFFFFF',
-  surface: '#F5F5F5',
-  primary: '#6366F1',
-  text: '#111827',
+  background: '#f6f2f0',
+  surface: '#FFFFFF',
+  card: '#FFFFFF',
+
+  primary: '#284B63', 
+  secondary: '#3C6E71',
+  accent: '#4F7C82',
+
+  text: '#1F2933',
   textSecondary: '#6B7280',
-  border: '#E5E7EB',
+
+  border: '#D9D9D9',
+  divider: '#E5E7EB',
+
+  success: '#22C55E',
+  warning: '#F59E0B',
   error: '#EF4444',
+
+  shadow: 'rgba(40, 75, 99, 0.08)',
 };
 
 export const darkColors = {
-  background: '#111827',
-  surface: '#1F2937',
-  primary: '#818CF8',
-  text: '#F9FAFB',
-  textSecondary: '#9CA3AF',
-  border: '#374151',
+  background: '#000000',
+  surface: '#111315',
+  card: '#1A1D1F',
+
+  primary: '#3C6E71',
+  secondary: '#284B63',
+  accent: '#5A8C8F',
+
+  text: '#FFFFFF',
+  textSecondary: '#A1A1AA',
+
+  border: '#2A2E31',
+  divider: '#353535',
+
+  success: '#22C55E',
+  warning: '#F59E0B',
   error: '#F87171',
+
+  shadow: 'rgba(0, 0, 0, 0.5)',
 };
 
 export type Colors = typeof lightColors;
@@ -32,5 +56,7 @@ export const radii = {
   s: 6,
   m: 12,
   l: 20,
+  xl: 28,
+  xxl: 36,
   full: 9999,
 };
