@@ -2,6 +2,8 @@ import { useRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
+  Image,
+  ImageSourcePropType,
   ListRenderItem,
   Pressable,
   StyleSheet,
@@ -18,24 +20,24 @@ const { width } = Dimensions.get('window');
 
 type Slide = {
   id: string;
-  title: string;
+  image: ImageSourcePropType;
   description: string;
 };
 
 const SLIDES: Slide[] = [
   {
     id: '1',
-    title: 'Meet Your Neighbors',
+    image: require('../../../../assets/neighbours.png'),
     description: 'See who lives nearby and build real connections with the people around you.',
   },
   {
     id: '2',
-    title: 'Stay in the Loop',
+    image: require('../../../../assets/loop.png'),
     description: 'Discover local events, announcements, and everything happening in your area.',
   },
   {
     id: '3',
-    title: 'Give and Receive',
+    image: require('../../../../assets/give.png'),
     description: 'Share resources, offer a hand, and make your neighborhood a better place to live.',
   },
 ];
@@ -67,10 +69,7 @@ export function OnboardingScreen() {
 
   const renderSlide: ListRenderItem<Slide> = ({ item }) => (
     <View style={styles.slide}>
-      <View style={styles.iconOuter}>
-        <View style={styles.iconInner} />
-      </View>
-      <Text style={styles.title}>{item.title}</Text>
+      <Image source={item.image} style={styles.slideImage} resizeMode="contain" />
       <Text style={styles.description}>{item.description}</Text>
     </View>
   );
@@ -146,27 +145,10 @@ const createStyles = (
       justifyContent: 'center',
       paddingHorizontal: spacing.l,
     },
-    iconOuter: {
-      width: 160,
-      height: 160,
-      borderRadius: radii.full,
-      backgroundColor: colors.surface,
-      justifyContent: 'center',
-      alignItems: 'center',
+    slideImage: {
+      width: width * 1.3,
+      height: width * 0.70,
       marginBottom: spacing.xl,
-    },
-    iconInner: {
-      width: 72,
-      height: 72,
-      borderRadius: radii.full,
-      backgroundColor: colors.primary,
-    },
-    title: {
-      color: colors.text,
-      fontSize: 26,
-      fontWeight: '700',
-      textAlign: 'center',
-      marginBottom: spacing.m,
     },
     description: {
       color: colors.textSecondary,

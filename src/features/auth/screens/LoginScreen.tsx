@@ -116,7 +116,6 @@ const createStyles = (
     },
     inner: {
       flex: 1,
-      justifyContent: 'center',
       paddingHorizontal: spacing.l,
     },
     title: {
