@@ -116,4 +116,9 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    // Exclude old support library brought in by react-native-splash-screen (conflicts with AndroidX)
+    configurations.all {
+        exclude group: "com.android.support", module: "support-compat"
+    }
 }

@@ -91,6 +91,57 @@ const MOCK_DATA: Community[] = [
   { id: '50', name: 'Mildly Interesting', description: 'The slightly unusual, the oddly satisfying, and the things you had to show someone.', memberCount: 4300000, isJoined: false, coverImage: 'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=600&auto=format&fit=crop' },
 ];
 
+// ── Community Detail types & data ─────────────────────────────────────────────
+
+export interface Post {
+  id: string;
+  author: string;
+  time: string;
+  content: string;
+  likes: number;
+  comments: number;
+}
+
+export interface Member {
+  id: string;
+  name: string;
+  avatar: string;
+}
+
+const MOCK_POSTS: Post[] = [
+  { id: '1', author: 'Alex M.',   time: '2h ago', content: "Just hit my first PR! Couldn't do it 8 months ago. Keep going everyone 🔥", likes: 284,  comments: 47  },
+  { id: '2', author: 'Jordan K.', time: '5h ago', content: "Weekly check-in thread: What are you working on this week? I'm tackling a long-standing plateau.", likes: 132,  comments: 91  },
+  { id: '3', author: 'Priya S.',  time: '1d ago', content: 'Honest question — is the hype actually worth it or just a trend? My results have been noticeably better but could be placebo.', likes: 67,   comments: 128 },
+  { id: '4', author: 'Liam T.',   time: '2d ago', content: 'PSA: rest and recovery is part of the process. Stop skipping it and wondering why progress is slow.', likes: 1042, comments: 156 },
+];
+
+const MOCK_MEMBERS: Member[] = [
+  { id: '1', name: 'Alex M.',   avatar: 'https://i.pravatar.cc/150?img=1' },
+  { id: '2', name: 'Jordan K.', avatar: 'https://i.pravatar.cc/150?img=2' },
+  { id: '3', name: 'Priya S.',  avatar: 'https://i.pravatar.cc/150?img=3' },
+  { id: '4', name: 'Liam T.',   avatar: 'https://i.pravatar.cc/150?img=4' },
+  { id: '5', name: 'Maya R.',   avatar: 'https://i.pravatar.cc/150?img=5' },
+  { id: '6', name: 'Chris D.',  avatar: 'https://i.pravatar.cc/150?img=6' },
+  { id: '7', name: 'Sofia L.',  avatar: 'https://i.pravatar.cc/150?img=7' },
+  { id: '8', name: 'Noah B.',   avatar: 'https://i.pravatar.cc/150?img=8' },
+];
+
+export const COMMUNITY_RULES: string[] = [
+  'Be kind and respectful to all members.',
+  'No spam or self-promotion without mod approval.',
+  'Keep content relevant to the community topic.',
+  'Search before posting common questions.',
+  'Credit original creators when sharing content.',
+];
+
+export const fetchCommunityPosts = (_communityId: string): Promise<Post[]> =>
+  new Promise((resolve) => setTimeout(() => resolve(MOCK_POSTS), 700));
+
+export const fetchCommunityMembers = (_communityId: string): Promise<Member[]> =>
+  new Promise((resolve) => setTimeout(() => resolve(MOCK_MEMBERS), 500));
+
+// ── Community list ─────────────────────────────────────────────────────────────
+
 export const fetchCommunities = async ({ pageParam = 0 }: { pageParam?: number }): Promise<{ data: Community[]; nextPage: number | null }> => {
   const PAGE_SIZE = 10;
 

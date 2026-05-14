@@ -1,13 +1,42 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TextInput, ScrollView, Pressable } from 'react-native';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { fetchCommunities } from '../api/communitiesApi';
 import { useTheme } from '../../../hooks/useTheme';
+import { useDebounce } from '../../../hooks/useDebounce';
 import { CommunityCard } from '../components/CommunityCard';
+import { CommunityCardSkeleton } from '../components/CommunityCardSkeleton';
+import { radii } from '../../../utils/tokens';
+import { ScreenWrapper } from '../../../components/ScreenWrapper';
+import { CommunitiesStackParamList } from '../../../navigation/CommunitiesStackNavigator';
+
+const FILTERS = ['All', 'Tech', 'Finance', 'Health', 'Gaming', 'Food', 'Music', 'Sports', 'Outdoors', 'Pets', 'Creative'];
+
+const FILTER_KEYWORDS: Record<string, string[]> = {
+  Tech:     ['react', 'typescript', 'self hosted', 'devs'],
+  Finance:  ['finance', 'frugal', 'crypto', 'hustle'],
+  Health:   ['fitness', 'running', 'meditation', 'mental'],
+  Gaming:   ['gaming', 'indie games', 'retro'],
+  Food:     ['coffee', 'cooking', 'hot sauce', 'spice'],
+  Music:    ['music', 'guitar', 'vinyl'],
+  Sports:   ['soccer', 'basketball', 'cycling'],
+  Outdoors: ['hiking', 'van life', 'travel', 'astronomy'],
+  Pets:     ['dogs', 'cats', 'aquarium'],
+  Creative: ['digital art', 'film photo', 'worldbuilding', 'lego'],
+};
+
+type Nav = NativeStackNavigationProp<CommunitiesStackParamList>;
 
 export const CommunityListScreen = () => {
   const { colors, spacing } = useTheme();
+  const navigation = useNavigation<Nav>();
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeFilter, setActiveFilter] = useState('All');
+
+  const debouncedSearch = useDebounce(searchQuery, 300);
+  const debouncedFilter = useDebounce(activeFilter, 150);
 
   const {
     data,
@@ -27,30 +56,53 @@ export const CommunityListScreen = () => {
 
   const communities = data?.pages.flatMap((page) => page.data) ?? [];
 
-  const filteredCommunities = communities.filter((c) =>
-    c.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredCommunities = communities.filter((c) => {
+    const matchesSearch = c.name.toLowerCase().includes(debouncedSearch.toLowerCase());
+    if (!matchesSearch) return false;
+    if (debouncedFilter === 'All') return true;
+    const keywords = FILTER_KEYWORDS[debouncedFilter] ?? [];
+    return keywords.some((kw) => c.name.toLowerCase().includes(kw));
+  });
 
   if (isLoading) {
     return (
-      <View style={[styles.centerContainer, { backgroundColor: colors.background }]}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      <ScreenWrapper>
+        <View style={styles.header}>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>Discover Communities</Text>
+          <TextInput
+            style={[
+              styles.searchInput,
+              { backgroundColor: colors.background, color: colors.text, borderColor: colors.border },
+            ]}
+            placeholder="Search communities..."
+            placeholderTextColor={colors.textSecondary}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          </View>
+        <View style={styles.skeletonGrid}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <View key={i} style={{ width: '48%', marginBottom: 12 }}>
+              <CommunityCardSkeleton />
+            </View>
+          ))}
+        </View>
+      </ScreenWrapper>
     );
   }
 
   if (isError) {
     return (
-      <View style={[styles.centerContainer, { backgroundColor: colors.background }]}>
+      <ScreenWrapper style={styles.centerContainer}>
         <Text style={{ color: colors.error }}>Failed to load communities.</Text>
-      </View>
+      </ScreenWrapper>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>Discover</Text>
+    <ScreenWrapper>
+      <View style={styles.header}>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Discover Communities</Text>
         <TextInput
           style={[
             styles.searchInput,
@@ -61,13 +113,47 @@ export const CommunityListScreen = () => {
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.pillsRow}
+        >
+          {FILTERS.map((filter) => {
+            const isActive = activeFilter === filter;
+            return (
+              <Pressable
+                key={filter}
+                onPress={() => setActiveFilter(filter)}
+                style={[
+                  styles.pill,
+                  {
+                    backgroundColor: isActive ? colors.primary : colors.background,
+                    borderColor: isActive ? colors.primary : colors.border,
+                    borderRadius: radii.full,
+                  },
+                ]}
+              >
+                <Text style={[styles.pillText, { color: isActive ? colors.surface : colors.textSecondary }]}>
+                  {filter}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
       </View>
 
       <FlatList
         data={filteredCommunities}
         keyExtractor={(item) => item.id}
+        numColumns={2}
         contentContainerStyle={{ padding: spacing.m }}
-        renderItem={({ item }) => <CommunityCard community={item} />}
+        columnWrapperStyle={{ gap: spacing.s, marginBottom: spacing.m }}
+        renderItem={({ item }) => (
+          <CommunityCard
+            community={item}
+            onPress={() => navigation.navigate('CommunityDetail', { community: item })}
+          />
+        )}
         onRefresh={refetch}
         refreshing={isRefetching}
         onEndReached={() => {
@@ -79,30 +165,70 @@ export const CommunityListScreen = () => {
             ? <ActivityIndicator style={{ margin: spacing.m }} color={colors.primary} />
             : null
         }
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={[styles.emptyTitle, { color: colors.text }]}>No results found</Text>
+            <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
+              {searchQuery ? `No communities match "${searchQuery}"` : `Nothing in ${activeFilter} yet`}
+            </Text>
+          </View>
+        }
       />
-    </View>
+    </ScreenWrapper>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
   centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  skeletonGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: 16,
+    justifyContent: 'space-between',
+    gap: 8,
+  },
   header: {
-    paddingTop: 60,
+    paddingTop: 30,
     paddingHorizontal: 16,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
+    paddingBottom: 10,
   },
   headerTitle: {
-    fontSize: 32,
+    fontSize: 18,
     fontWeight: '800',
-    marginBottom: 16,
+    marginBottom: 8,
   },
   searchInput: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 9999,
     borderWidth: 1,
-    fontSize: 16,
+    fontSize: 12,
+    marginBottom: 10,
+  },
+  pillsRow: {
+    gap: 8,
+    paddingVertical: 2,
+  },
+  pill: {
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderWidth: 1,
+  },
+  pillText: {
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    paddingTop: 60,
+    gap: 8,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  emptySubtitle: {
+    fontSize: 14,
   },
 });

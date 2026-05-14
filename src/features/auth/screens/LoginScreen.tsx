@@ -8,7 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScreenWrapper } from '../../../components/ScreenWrapper';
 import { EyeIcon } from '../../../components/EyeIcon';
 import { GradientButton } from '../../../components/GradientButton';
 import { useTheme } from '../../../hooks/useTheme';
@@ -42,7 +42,7 @@ export function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScreenWrapper style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.inner}
@@ -88,7 +88,7 @@ export function LoginScreen() {
         </View>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </ScreenWrapper>
   );
 }
 

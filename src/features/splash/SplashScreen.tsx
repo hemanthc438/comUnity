@@ -1,5 +1,4 @@
-import { StyleSheet, View } from 'react-native';
-import { AppLogo } from '../../components/AppLogo';
+import { Image, StyleSheet, View } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 
 export function SplashScreen() {
@@ -16,7 +15,18 @@ export function SplashScreen() {
         },
       ]}
     >
-      <AppLogo size={300} />
+      <Image
+        source={require('../../../assets/comUnity.png')}
+        style={styles.logo}
+        resizeMode="contain"
+      />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  logo: {
+    width: 220,
+    height: 220,
+  },
+});

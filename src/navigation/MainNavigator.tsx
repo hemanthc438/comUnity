@@ -14,6 +14,7 @@ export function MainNavigator() {
 
   return (
     <Tab.Navigator
+      sceneContainerStyle={{ backgroundColor: colors.background }}
       screenOptions={{
         headerShown: false,
         tabBarStyle: {

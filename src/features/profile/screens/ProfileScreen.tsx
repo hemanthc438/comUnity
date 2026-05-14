@@ -4,7 +4,7 @@ import { useAuthStore } from '../../../store/useAuthStore';
 import { useTheme } from '../../../hooks/useTheme';
 import { useThemeStore } from '../../../store/useThemeStore';
 import { GradientButton } from '../../../components/GradientButton';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScreenWrapper } from '../../../components/ScreenWrapper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export const ProfileScreen = () => {
@@ -16,7 +16,7 @@ export const ProfileScreen = () => {
     useAuthStore.getState().logout();
   }
   return (
-    <SafeAreaView style={[styles.container,{backgroundColor: colors.background, padding: spacing.l}]}>
+    <ScreenWrapper style={[styles.container,{backgroundColor: colors.background, padding: spacing.l}]}>
       <View style={styles.profileContent}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.m, marginBottom: spacing.l }}>
           <View style={{ width: 64, height: 64, borderRadius: radii.full, backgroundColor: colors.primary }} />
@@ -41,7 +41,7 @@ export const ProfileScreen = () => {
       </View>
 
       <GradientButton label='Logout' onPress={handleLogout} showArrow={false} color={colors.error} />
-    </SafeAreaView>
+    </ScreenWrapper>
   );
 };
 

@@ -3,9 +3,9 @@ export const lightColors = {
   surface: '#FFFFFF',
   card: '#FFFFFF',
 
-  primary: '#284B63', 
-  secondary: '#3C6E71',
-  accent: '#4F7C82',
+  primary: '#3C6E71',
+  secondary: '#284B63',
+  accent: '#5A8C8F',
 
   text: '#1F2933',
   textSecondary: '#6B7280',

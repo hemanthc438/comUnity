@@ -10,8 +10,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { GradientButton } from '../../../components/GradientButton';
+import { ScreenWrapper } from '../../../components/ScreenWrapper';
 import { useTheme } from '../../../hooks/useTheme';
 import { useAuthStore } from '../../../store/useAuthStore';
 import type { Colors } from '../../../utils/tokens';
@@ -75,7 +75,7 @@ export function OnboardingScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScreenWrapper>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: spacing.s }}>
       {activeIndex !== 0 && (
         <Pressable
@@ -115,7 +115,7 @@ export function OnboardingScreen() {
           onPress={goNext}
         />
       </View>
-    </SafeAreaView>
+    </ScreenWrapper>
   );
 }
 
