@@ -8,9 +8,10 @@ type Props = {
   loading?: boolean;
   disabled?: boolean;
   showArrow?: boolean;
+  color?: string;
 };
 
-export function GradientButton({ label, onPress, loading, disabled, showArrow = true }: Props) {
+export function GradientButton({ label, onPress, loading, disabled, showArrow = true, color }: Props) {
   const { colors, spacing, radii } = useTheme();
 
   return (
@@ -20,7 +21,7 @@ export function GradientButton({ label, onPress, loading, disabled, showArrow = 
       style={({ pressed }) => [styles.pressable, (pressed || disabled) && { opacity: 0.75 }]}
     >
       <LinearGradient
-        colors={[colors.primary, '#000000ff']}
+        colors={[color || colors.primary, '#000000ff']}
         start={{ x: 0.75, y: 0 }}
         end={{ x: 0.75, y: 1 }}
         style={[styles.gradient, { borderRadius: radii.full, paddingVertical: spacing.m }]}

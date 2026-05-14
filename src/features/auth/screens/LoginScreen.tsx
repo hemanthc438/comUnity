@@ -33,7 +33,7 @@ export function LoginScreen() {
     setLoading(true);
     try {
       const token = await loginApi(email, password);
-      login(token);
+      login(token, email);
     } catch (e: any) {
       setError(e.message);
     } finally {

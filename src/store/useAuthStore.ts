@@ -3,24 +3,28 @@ import { storage } from '../utils/storage';
 
 interface AuthState {
   token: string | null;
+  email: string | null;
   hasSeenOnboarding: boolean;
-  login: (token: string) => void;
+  login: (token: string, email: string) => void;
   logout: () => void;
   completeOnboarding: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   token: storage.getString('user.token') ?? null,
+  email: storage.getString('user.email') ?? null,
   hasSeenOnboarding: storage.getBoolean('app.hasSeenOnboarding') ?? false,
 
-  login: (token) => {
+  login: (token, email) => {
     storage.set('user.token', token);
-    set({ token });
+    storage.set('user.email', email);
+    set({ token, email });
   },
 
   logout: () => {
     storage.remove('user.token');
-    set({ token: null });
+    storage.remove('user.email');
+    set({ token: null, email: null });
   },
 
   completeOnboarding: () => {
