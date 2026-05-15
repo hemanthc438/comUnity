@@ -68,3 +68,21 @@ If I had a bit more time, here's what I would tackle next:
 3. **Analytics:** Add analytics to track user behavior and engagement
 
 ---
+
+## Development Workflow & Branching Strategy
+
+To keep the development process organized and reflect how I would work on a real production team, I utilized a structured feature-branching strategy. Instead of building everything directly in one branch, I isolated features logically:
+
+1. **`main` (Initial Setup)**  
+   Started by bootstrapping the React Native CLI app and laying down the base architecture. This included configuring React Navigation, the custom theming engine, React Query, MMKV, and ESLint/Prettier.
+
+2. **`feature/auth`**  
+   I built the authentication flow first because it serves as the foundation for the rest of the app. This branch included the mock login flow, navigation guards, theme integration, and our reusable screen wrappers. Once stable, it was merged back into `main`.
+
+3. **`feature/communities`**  
+   Branched off the updated `main` to build the core feed. This included the community listing screen, search/filters, infinite scroll, pull-to-refresh, skeleton loaders, and FlatList optimizations. I also integrated React Query here to handle our mocked API layer and optimistic updates.
+
+4. **`feature/posts`**  
+   Once the communities infrastructure was merged and stable, I created the posts branch. Because I already had a solid reusable architecture and shared UI components from the previous branches, building out the global post creation flow and offline draft persistence was much faster and cleaner.
+
+By building strictly in the order of `Setup → Auth → Communities → Posts`, the codebase evolved naturally without over-engineering or creating massive, tangled pull requests.

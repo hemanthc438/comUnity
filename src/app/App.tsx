@@ -1,12 +1,13 @@
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { useEffect } from 'react';
-import { Platform, StatusBar } from 'react-native';
-import SplashScreen from 'react-native-splash-screen';
+import { useEffect, useState } from 'react';
+import { StatusBar } from 'react-native';
+import NativeSplash from 'react-native-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { useTheme } from '../hooks/useTheme';
 import { RootNavigator } from '../navigation/RootNavigator';
+import { SplashScreen } from '../features/splash/SplashScreen';
 import { mmkvPersister } from '../utils/queryPersister';
 
 const queryClient = new QueryClient({
@@ -21,12 +22,17 @@ const queryClient = new QueryClient({
 
 function App() {
   const { isDark } = useTheme();
+  const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
-    if (Platform.OS === 'android') {
-      SplashScreen.hide();
-    }
+    NativeSplash.hide();
+    const timer = setTimeout(() => setShowSplash(false), 2000);
+    return () => clearTimeout(timer);
   }, []);
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
 
   return (
     <ErrorBoundary>
