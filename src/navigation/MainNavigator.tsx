@@ -1,10 +1,10 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Ionicons from '@react-native-vector-icons/ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { HomeStackNavigator } from './HomeStackNavigator';
 import { CommunitiesStackNavigator } from './CommunitiesStackNavigator';
 import { ProfileScreen } from '../features/profile/screens/ProfileScreen';
+import { GlobalCreatePostScreen } from '../features/posts/screens/GlobalCreatePostScreen';
 import { useTheme } from '../hooks/useTheme';
 
 const Tab = createBottomTabNavigator();
@@ -40,6 +40,16 @@ export function MainNavigator() {
         options={{
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account-group" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="CreatePost"
+        component={GlobalCreatePostScreen}
+        options={{
+          tabBarLabel: 'Post',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="plus-circle" color={color} size={28} />
           ),
         }}
       />

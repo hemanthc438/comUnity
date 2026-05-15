@@ -52,5 +52,10 @@ export const useCommunityMutations = () => {
         queryClient.setQueryData(['community', id], context.previousDetail);
       }
     },
+
+    onSettled: (_data, _err, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ['communities'] });
+      queryClient.invalidateQueries({ queryKey: ['community', id] });
+    },
   });
 };

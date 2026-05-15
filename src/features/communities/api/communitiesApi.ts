@@ -7,6 +7,26 @@ export interface Community {
   coverImage: string;
 }
 
+import { storage } from '../../../utils/storage';
+
+const JOINED_KEY = 'JOINED_COMMUNITY_IDS';
+
+const getJoinedIds = (): Set<string> => {
+  const raw = storage.getString(JOINED_KEY);
+  return new Set(raw ? JSON.parse(raw) : []);
+};
+
+export const saveJoinedId = (id: string, joining: boolean) => {
+  const ids = getJoinedIds();
+  if (joining) { ids.add(id); } else { ids.delete(id); }
+  storage.set(JOINED_KEY, JSON.stringify([...ids]));
+};
+
+const hydrate = (c: Community): Community => ({
+  ...c,
+  isJoined: getJoinedIds().has(c.id),
+});
+
 const MOCK_DATA: Community[] = [
   // Tech & Programming
   { id: '1', name: 'React Native Devs', description: 'Discuss the latest in React Native, Reanimated, and mobile architecture.', memberCount: 142000, isJoined: false, coverImage: 'https://images.unsplash.com/photo-1555099962-4199c345e5dd?q=80&w=600&auto=format&fit=crop' },
@@ -149,7 +169,7 @@ export const fetchCommunities = async ({ pageParam = 0 }: { pageParam?: number }
     setTimeout(() => {
       const start = pageParam * PAGE_SIZE;
       const end = start + PAGE_SIZE;
-      const data = MOCK_DATA.slice(start, end);
+      const data = MOCK_DATA.slice(start, end).map(hydrate);
 
       resolve({
         data,
@@ -162,6 +182,7 @@ export const fetchCommunities = async ({ pageParam = 0 }: { pageParam?: number }
 export const fetchCommunityById = (id: string): Promise<Community | null> =>
   new Promise((resolve) => {
     setTimeout(() => {
-      resolve(MOCK_DATA.find((c) => c.id === id) ?? null);
+      const found = MOCK_DATA.find((c) => c.id === id);
+      resolve(found ? hydrate(found) : null);
     }, 0);
   });

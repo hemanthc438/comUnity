@@ -19,9 +19,9 @@ import { CustomAlert } from '../../../components/modals/CustomAlert';
 import {
   Community,
   fetchCommunityById,
-  fetchCommunityPosts,
   fetchCommunityMembers,
 } from '../api/communitiesApi';
+import { fetchPosts } from '../../posts/api/postsApi';
 import { useCommunityMutations } from '../hooks/useCommunityMutations';
 import { PostsTab } from '../components/tabs/PostsTab';
 import { MembersTab } from '../components/tabs/MembersTab';
@@ -49,9 +49,6 @@ export const CommunityDetailScreen = () => {
   const [bannerLoaded, setBannerLoaded] = useState(false);
   const [avatarLoaded, setAvatarLoaded] = useState(false);
 
-  // Subscribe to the live ['community', id] cache entry.
-  // initialData from nav param → zero loading flash.
-  // Mutation keeps this in sync via optimistic setQueryData.
   const { data: community = navCommunity } = useQuery<Community | null>({
     queryKey: ['community', navCommunity.id],
     queryFn: () => fetchCommunityById(navCommunity.id),
@@ -62,8 +59,8 @@ export const CommunityDetailScreen = () => {
   const isJoined = community?.isJoined ?? navCommunity.isJoined;
 
   const { data: posts = [], isLoading: postsLoading } = useQuery({
-    queryKey: ['communityPosts', navCommunity.id],
-    queryFn: () => fetchCommunityPosts(navCommunity.id),
+    queryKey: ['posts', navCommunity.id],
+    queryFn: () => fetchPosts(navCommunity.id),
   });
 
   const { data: members = [], isLoading: membersLoading } = useQuery({
@@ -109,7 +106,6 @@ export const CommunityDetailScreen = () => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Hero — banner + avatar + info */}
         <View>
           <View>
             <Shimmer width={SCREEN_WIDTH} height={BANNER_HEIGHT} borderRadius={0} />
@@ -162,7 +158,6 @@ export const CommunityDetailScreen = () => {
           </View>
         </View>
 
-        {/* Tab pages */}
         <ScrollView
           ref={pagerRef}
           horizontal
@@ -290,7 +285,7 @@ const styles = StyleSheet.create({
   },
   page: {
     width: SCREEN_WIDTH,
-    padding: 16,
+    // padding: 16,
     paddingBottom: 40,
   },
 });
