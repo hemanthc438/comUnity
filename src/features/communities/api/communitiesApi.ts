@@ -158,3 +158,10 @@ export const fetchCommunities = async ({ pageParam = 0 }: { pageParam?: number }
     }, 1000);
   });
 };
+
+export const fetchCommunityById = (id: string): Promise<Community | null> =>
+  new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(MOCK_DATA.find((c) => c.id === id) ?? null);
+    }, 0);
+  });

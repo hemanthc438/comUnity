@@ -1,4 +1,4 @@
-export const toggleJoinCommunity = (communityId: string, isJoining: boolean): Promise<boolean> => {
+export const toggleJoinCommunity = (_communityId: string, isJoining: boolean): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       const success = Math.random() > 0.1;

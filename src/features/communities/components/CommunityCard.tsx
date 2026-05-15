@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { View, Text, Image, StyleSheet, Platform, Pressable } from 'react-native';
 import { useTheme } from '../../../hooks/useTheme';
 import { Community } from '../api/communitiesApi';
@@ -14,16 +14,12 @@ const AVATAR_SIZE = 64;
 export const CommunityCard = memo(function CommunityCard({ community, onPress }: Props) {
   const { colors, radii } = useTheme();
   const { mutate } = useCommunityMutations();
-  const [isJoined, setIsJoined] = useState(community.isJoined);
 
+  // isJoined is derived directly from the React Query cache via the community prop.
+  // No local state — the cache is the single source of truth.
   const handleJoinToggle = useCallback(() => {
-    const joining = !isJoined;
-    setIsJoined(joining);
-    mutate(
-      { id: community.id, isJoining: joining },
-      { onError: () => setIsJoined(!joining) },
-    );
-  }, [isJoined, community.id, mutate]);
+    mutate({ id: community.id, isJoining: !community.isJoined });
+  }, [community.id, community.isJoined, mutate]);
 
   const formattedCount = useMemo(() => {
     if (community.memberCount >= 1_000_000) {
@@ -67,14 +63,14 @@ export const CommunityCard = memo(function CommunityCard({ community, onPress }:
         style={[
           styles.joinButton,
           {
-            backgroundColor: isJoined ? colors.surface : colors.primary,
-            borderColor: isJoined ? colors.border : colors.primary,
+            backgroundColor: community.isJoined ? colors.surface : colors.primary,
+            borderColor: community.isJoined ? colors.border : colors.primary,
             borderRadius: radii.full,
           },
         ]}
       >
         <Text style={[styles.joinText, { color: colors.text }]}>
-          {isJoined ? '✓' : 'Join'}
+          {community.isJoined ? '✓' : 'Join'}
         </Text>
       </Pressable>
 

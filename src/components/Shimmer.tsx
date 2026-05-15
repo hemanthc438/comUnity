@@ -74,7 +74,7 @@ export const Shimmer = ({
       <AnimatedGradient
         colors={[
           'transparent',
-          'rgba(255,255,255,0.08)',
+          'rgba(248, 30, 30, 1)',
           'transparent',
         ]}
         start={{ x: 0, y: 0 }}
