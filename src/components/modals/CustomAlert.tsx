@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Modal, View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 
@@ -16,7 +16,7 @@ interface Props {
   onDismiss: () => void;
 }
 
-export const CustomAlert = ({ visible, title, subtitle, actions, onDismiss }: Props) => {
+export const CustomAlert = memo(function CustomAlert({ visible, title, subtitle, actions, onDismiss }: Props) {
   const { colors, radii } = useTheme();
 
   return (
@@ -64,7 +64,7 @@ export const CustomAlert = ({ visible, title, subtitle, actions, onDismiss }: Pr
       </Pressable>
     </Modal>
   );
-};
+});
 
 const styles = StyleSheet.create({
   overlay: {

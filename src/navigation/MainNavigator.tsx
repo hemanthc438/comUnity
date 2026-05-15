@@ -14,9 +14,9 @@ export function MainNavigator() {
 
   return (
     <Tab.Navigator
-      sceneContainerStyle={{ backgroundColor: colors.background }}
       screenOptions={{
         headerShown: false,
+        sceneStyle: { backgroundColor: colors.background },
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
@@ -30,7 +30,7 @@ export function MainNavigator() {
         component={HomeStackNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" color={color} size={size} />
+            <MaterialCommunityIcons name="home" color={color} size={size} />
           ),
         }}
       />
@@ -48,7 +48,7 @@ export function MainNavigator() {
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person" color={color} size={size} />
+            <MaterialCommunityIcons name="account" color={color} size={size} />
           ),
         }}
       />

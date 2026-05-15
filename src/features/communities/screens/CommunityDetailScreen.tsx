@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -47,18 +47,19 @@ export const CommunityDetailScreen = () => {
   const [activeTab, setActiveTab] = useState<Tab>('Posts');
   const [showLeaveModal, setShowLeaveModal] = useState(false);
 
-  const handleJoinToggle = (joining: boolean) => {
+  const handleJoinToggle = useCallback((joining: boolean) => {
     setIsJoined(joining);
     mutate(
       { id: community.id, isJoining: joining },
       { onError: () => setIsJoined(!joining) },
     );
-  };
+  }, [community.id, mutate]);
 
-  const handleTabPress = (tab: Tab, index: number) => {
+  const handleTabPress = useCallback((tab: Tab, index: number) => {
     setActiveTab(tab);
     pagerRef.current?.scrollTo({ x: index * SCREEN_WIDTH, animated: true });
-  };
+  }, []);
+
   const [bannerLoaded, setBannerLoaded] = useState(false);
   const [avatarLoaded, setAvatarLoaded] = useState(false);
 
@@ -72,12 +73,11 @@ export const CommunityDetailScreen = () => {
     queryFn: () => fetchCommunityMembers(community.id),
   });
 
-  const formattedCount =
-    community.memberCount >= 1_000_000
-      ? `${(community.memberCount / 1_000_000).toFixed(1)}M`
-      : community.memberCount >= 1000
-      ? `${(community.memberCount / 1000).toFixed(0)}k`
-      : String(community.memberCount);
+  const formattedCount = useMemo(() => {
+    if (community.memberCount >= 1_000_000) return `${(community.memberCount / 1_000_000).toFixed(1)}M`;
+    if (community.memberCount >= 1000) return `${(community.memberCount / 1000).toFixed(0)}k`;
+    return String(community.memberCount);
+  }, [community.memberCount]);
 
   return (
     <ScreenWrapper edges={['top', 'left', 'right', 'bottom']}>

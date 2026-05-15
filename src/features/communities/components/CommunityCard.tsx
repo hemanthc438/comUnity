@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { View, Text, Image, StyleSheet, Platform, Pressable } from 'react-native';
 import { useTheme } from '../../../hooks/useTheme';
 import { Community } from '../api/communitiesApi';
@@ -11,25 +11,29 @@ interface Props {
 
 const AVATAR_SIZE = 64;
 
-export const CommunityCard = ({ community, onPress }: Props) => {
+export const CommunityCard = memo(function CommunityCard({ community, onPress }: Props) {
   const { colors, radii } = useTheme();
   const { mutate } = useCommunityMutations();
   const [isJoined, setIsJoined] = useState(community.isJoined);
 
-  const handleJoinToggle = () => {
+  const handleJoinToggle = useCallback(() => {
     const joining = !isJoined;
     setIsJoined(joining);
     mutate(
       { id: community.id, isJoining: joining },
       { onError: () => setIsJoined(!joining) },
     );
-  };
+  }, [isJoined, community.id, mutate]);
 
-  const formattedCount = community.memberCount >= 1000000
-    ? `${(community.memberCount / 1000000).toFixed(1)}M`
-    : community.memberCount >= 1000
-    ? `${(community.memberCount / 1000).toFixed(0)}k`
-    : String(community.memberCount);
+  const formattedCount = useMemo(() => {
+    if (community.memberCount >= 1_000_000) {
+      return `${(community.memberCount / 1_000_000).toFixed(1)}M`;
+    }
+    if (community.memberCount >= 1000) {
+      return `${(community.memberCount / 1000).toFixed(0)}k`;
+    }
+    return String(community.memberCount);
+  }, [community.memberCount]);
 
   return (
     <Pressable
@@ -89,7 +93,6 @@ export const CommunityCard = ({ community, onPress }: Props) => {
         />
       </View>
 
-      {/* Content */}
       <View style={styles.body}>
         <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
           {community.name}
@@ -101,10 +104,9 @@ export const CommunityCard = ({ community, onPress }: Props) => {
           {formattedCount} members
         </Text>
       </View>
-
     </Pressable>
   );
-};
+});
 
 const styles = StyleSheet.create({
   card: {

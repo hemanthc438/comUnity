@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
@@ -8,7 +8,7 @@ interface Props {
   onPress?: () => void;
 }
 
-export const BackButton = ({ onPress }: Props) => {
+export const BackButton = memo(function BackButton({ onPress }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -23,7 +23,7 @@ export const BackButton = ({ onPress }: Props) => {
       </Pressable>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   row: {

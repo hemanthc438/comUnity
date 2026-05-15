@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, TextInput, ScrollView, Pressable } from 'react-native';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { fetchCommunities } from '../api/communitiesApi';
+import { fetchCommunities, Community } from '../api/communitiesApi';
 import { useTheme } from '../../../hooks/useTheme';
 import { useDebounce } from '../../../hooks/useDebounce';
 import { CommunityCard } from '../components/CommunityCard';
@@ -54,15 +54,33 @@ export const CommunityListScreen = () => {
     getNextPageParam: (lastPage) => lastPage.nextPage,
   });
 
-  const communities = data?.pages.flatMap((page) => page.data) ?? [];
+  const communities = useMemo(
+    () => data?.pages.flatMap((page) => page.data) ?? [],
+    [data],
+  );
 
-  const filteredCommunities = communities.filter((c) => {
-    const matchesSearch = c.name.toLowerCase().includes(debouncedSearch.toLowerCase());
-    if (!matchesSearch) return false;
-    if (debouncedFilter === 'All') return true;
-    const keywords = FILTER_KEYWORDS[debouncedFilter] ?? [];
-    return keywords.some((kw) => c.name.toLowerCase().includes(kw));
-  });
+  const filteredCommunities = useMemo(() => {
+    const search = debouncedSearch.toLowerCase();
+    return communities.filter((c) => {
+      if (!c.name.toLowerCase().includes(search)) return false;
+      if (debouncedFilter === 'All') return true;
+      const keywords = FILTER_KEYWORDS[debouncedFilter] ?? [];
+      return keywords.some((kw) => c.name.toLowerCase().includes(kw));
+    });
+  }, [communities, debouncedSearch, debouncedFilter]);
+
+  const renderItem = useCallback(({ item }: { item: Community }) => (
+    <CommunityCard
+      community={item}
+      onPress={() => navigation.navigate('CommunityDetail', { community: item })}
+    />
+  ), [navigation]);
+
+  const onEndReached = useCallback(() => {
+    if (hasNextPage) fetchNextPage();
+  }, [hasNextPage, fetchNextPage]);
+
+  const keyExtractor = useCallback((item: Community) => item.id, []);
 
   if (isLoading) {
     return (
@@ -79,7 +97,7 @@ export const CommunityListScreen = () => {
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
-          </View>
+        </View>
         <View style={styles.skeletonGrid}>
           {Array.from({ length: 6 }).map((_, i) => (
             <View key={i} style={{ width: '48%', marginBottom: 12 }}>
@@ -144,21 +162,14 @@ export const CommunityListScreen = () => {
 
       <FlatList
         data={filteredCommunities}
-        keyExtractor={(item) => item.id}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
         numColumns={2}
         contentContainerStyle={{ padding: spacing.m }}
         columnWrapperStyle={{ gap: spacing.s, marginBottom: spacing.m }}
-        renderItem={({ item }) => (
-          <CommunityCard
-            community={item}
-            onPress={() => navigation.navigate('CommunityDetail', { community: item })}
-          />
-        )}
         onRefresh={refetch}
         refreshing={isRefetching}
-        onEndReached={() => {
-          if (hasNextPage) fetchNextPage();
-        }}
+        onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
         ListFooterComponent={
           isFetchingNextPage

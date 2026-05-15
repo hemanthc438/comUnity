@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 import { useTheme } from '../../../hooks/useTheme';
 import { Shimmer } from '../../../components/Shimmer';
 
 const AVATAR_SIZE = 64;
 
-export const CommunityCardSkeleton = () => {
+export const CommunityCardSkeleton = memo(function CommunityCardSkeleton() {
   const { colors, radii } = useTheme();
 
   return (
@@ -42,7 +42,7 @@ export const CommunityCardSkeleton = () => {
       </View>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   card: {

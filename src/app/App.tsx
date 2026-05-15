@@ -1,31 +1,49 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { useEffect } from 'react';
-import { StatusBar } from 'react-native';
+import { Platform, StatusBar } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import { useTheme } from '../hooks/useTheme';
 import { RootNavigator } from '../navigation/RootNavigator';
+import { mmkvPersister } from '../utils/queryPersister';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: 1000 * 60 * 5,
+      staleTime: 1000 * 30,
+      retry: 2,
+    },
+  },
+});
 
 function App() {
   const { isDark } = useTheme();
 
   useEffect(() => {
-    SplashScreen.hide();
+    if (Platform.OS === 'android') {
+      SplashScreen.hide();
+    }
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider>
-        <StatusBar
-          barStyle={isDark ? 'light-content' : 'dark-content'}
-          backgroundColor="transparent"
-          translucent
-        />
-        <RootNavigator />
-      </SafeAreaProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister: mmkvPersister }}
+      >
+        <SafeAreaProvider>
+          <StatusBar
+            barStyle={isDark ? 'light-content' : 'dark-content'}
+            backgroundColor="transparent"
+            translucent
+          />
+          <RootNavigator />
+        </SafeAreaProvider>
+      </PersistQueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

@@ -1,4 +1,5 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
+import React, { memo } from 'react';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '../hooks/useTheme';
 
@@ -11,7 +12,7 @@ type Props = {
   color?: string;
 };
 
-export function GradientButton({ label, onPress, loading, disabled, showArrow = true, color }: Props) {
+export const GradientButton = memo(function GradientButton({ label, onPress, loading, disabled, showArrow = true, color }: Props) {
   const { colors, spacing, radii } = useTheme();
 
   return (
@@ -20,12 +21,13 @@ export function GradientButton({ label, onPress, loading, disabled, showArrow = 
       disabled={disabled || loading}
       style={({ pressed }) => [styles.pressable, (pressed || disabled) && { opacity: 0.75 }]}
     >
-      <LinearGradient
-        colors={[color || colors.primary, '#000000ff']}
-        start={{ x: 0.75, y: 0 }}
-        end={{ x: 0.75, y: 1 }}
-        style={[styles.gradient, { borderRadius: radii.full, paddingVertical: spacing.m }]}
-      >
+      <View style={[styles.container, { borderRadius: radii.full, paddingVertical: spacing.m }]}>
+        <LinearGradient
+          colors={[color || colors.primary, '#000000ff']}
+          start={{ x: 0.75, y: 0 }}
+          end={{ x: 0.75, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
@@ -34,22 +36,22 @@ export function GradientButton({ label, onPress, loading, disabled, showArrow = 
             {showArrow && <Text style={styles.arrow}>→</Text>}
           </>
         )}
-      </LinearGradient>
+      </View>
     </Pressable>
   );
-}
+});
 
 const styles = StyleSheet.create({
   pressable: {
     width: '100%',
   },
-  gradient: {
+  container: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
     gap: 10,
     borderWidth: 1,
-    borderRadius: 9999,
     borderColor: '#ffffff3a',
   },
   label: {
