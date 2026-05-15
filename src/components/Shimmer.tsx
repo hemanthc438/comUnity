@@ -33,7 +33,8 @@ export const Shimmer = ({
   borderRadius = 8,
   style,
 }: Props) => {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
+  const highlight = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
 
   const translateX = useSharedValue(-200);
 
@@ -72,11 +73,7 @@ export const Shimmer = ({
       ]}
     >
       <AnimatedGradient
-        colors={[
-          'transparent',
-          'rgba(248, 30, 30, 1)',
-          'transparent',
-        ]}
+        colors={['transparent', highlight, 'transparent']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={[
